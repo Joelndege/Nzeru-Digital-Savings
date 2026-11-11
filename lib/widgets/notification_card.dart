@@ -31,11 +31,12 @@ class NotificationCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.cardSurface,
             borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.brandBlue.withAlpha(18)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha(10),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                color: AppColors.brandBlueDark.withAlpha(14),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
               ),
             ],
           ),

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../config/app_colors.dart';
 import '../../models/ijc_group.dart';
 import '../../providers/ijc_provider.dart';
-import '../../services/paychangu_sandbox_service.dart';
+import '../../widgets/mobile_money_payment_sheet.dart';
 import '../../utils/currency_util.dart';
 
 class IjcDepositScreen extends StatefulWidget {
@@ -22,7 +21,6 @@ class _IjcDepositScreenState extends State<IjcDepositScreen> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   final TextEditingController _releaseAmountController = TextEditingController();
-  final PayChanguSandboxService _payChanguSandboxService = const PayChanguSandboxService();
   String _policy = 'WEEKLY';
   bool _isSubmitting = false;
 
@@ -69,32 +67,20 @@ class _IjcDepositScreenState extends State<IjcDepositScreen> {
       }
     }
 
-    if (!mounted) return;
+    final paymentChoice = await showMobileMoneyPaymentSheet(
+      context,
+      action: 'Deposit',
+      amount: amount,
+    );
+    if (paymentChoice == null || !mounted) return;
     setState(() => _isSubmitting = true);
 
     try {
-      final result = await _payChanguSandboxService.initiatePayment(
-        pocketName: widget.group.name,
-        amount: amount,
-        currency: 'MWK',
-        description: _noteController.text.trim().isNotEmpty
-            ? _noteController.text.trim()
-            : 'Nzeru Pocket funding',
-      );
-
-      final paymentUrl = result['paymentUrl']?.toString();
-      if (paymentUrl != null && paymentUrl.isNotEmpty) {
-        final uri = Uri.tryParse(paymentUrl);
-        if (uri != null && await canLaunchUrl(uri)) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-      }
-
       final provider = context.read<IjcProvider>();
       final success = await provider.deposit(
         groupId: widget.group.id,
         amount: amount,
-        description: result['reference'] as String? ?? 'PayChangu sandbox',
+        description: '${paymentChoice.gateway} · ${paymentChoice.providerName} (demo)',
         totalAmount: null,
         releaseAmount: releaseAmount,
         cashOutPolicy: _needsConfig ? _policy : null,
@@ -107,7 +93,7 @@ class _IjcDepositScreenState extends State<IjcDepositScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Payment reference ${result['reference']} is ready in the PayChangu sandbox. Funds posted successfully.',
+              'Funds added successfully using ${paymentChoice.providerName}.',
             ),
           ),
         );
@@ -121,7 +107,7 @@ class _IjcDepositScreenState extends State<IjcDepositScreen> {
       if (!mounted) return;
       setState(() => _isSubmitting = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('PayChangu sandbox request failed: $e')),
+        SnackBar(content: Text('Payment could not be completed: $e')),
       );
     }
   }
@@ -175,7 +161,7 @@ class _IjcDepositScreenState extends State<IjcDepositScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'PayChangu Sandbox',
+                            'PayChangu',
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
@@ -184,7 +170,7 @@ class _IjcDepositScreenState extends State<IjcDepositScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Secure test checkout for your pocket funding.',
+                            'Choose a mobile money wallet to fund your pocket.',
                             style: GoogleFonts.poppins(
                               fontSize: 12,
                               color: Colors.white.withAlpha(220),
@@ -366,7 +352,7 @@ class _IjcDepositScreenState extends State<IjcDepositScreen> {
                 onPressed: _isSubmitting ? null : _submitDeposit,
                 icon: const Icon(Icons.payment_rounded),
                 label: Text(
-                  _isSubmitting ? 'Processing...' : 'Pay with PayChangu Sandbox',
+                  _isSubmitting ? 'Processing...' : 'Continue with PayChangu',
                   style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                 ),
                 style: FilledButton.styleFrom(

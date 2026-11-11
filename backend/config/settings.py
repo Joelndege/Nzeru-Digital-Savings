@@ -176,10 +176,20 @@ SIMPLE_JWT = {
 }
 
 AI_API_KEY = os.environ.get('AI_API_KEY', '').strip()
-AI_API_BASE_URL = os.environ.get(
-    'AI_API_BASE_URL', 'https://api.openai.com/v1'
-).rstrip('/')
-AI_MODEL = os.environ.get('AI_MODEL', 'gpt-4o-mini').strip()
+CLOUDFLARE_ACCOUNT_ID = os.environ.get('CLOUDFLARE_ACCOUNT_ID', '').strip()
+AI_API_BASE_URL = os.environ.get('AI_API_BASE_URL', '').strip().rstrip('/')
+if not AI_API_BASE_URL and CLOUDFLARE_ACCOUNT_ID:
+    AI_API_BASE_URL = (
+        'https://api.cloudflare.com/client/v4/accounts/'
+        f'{CLOUDFLARE_ACCOUNT_ID}/ai/v1'
+    )
+AI_MODEL = os.environ.get(
+    'AI_MODEL', '@cf/meta/llama-3.2-3b-instruct'
+).strip()
+ECONOMIC_DATASET_PATH = os.environ.get(
+    'ECONOMIC_DATASET_PATH',
+    str(BASE_DIR / 'api' / 'data' / 'malawi_economic_indicators.json'),
+)
 
 
 # ── CORS ──────────────────────────────────────────────────────────────────────

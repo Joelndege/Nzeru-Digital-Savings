@@ -12,6 +12,7 @@ import '../../widgets/glass_card.dart';
 import '../../widgets/glow_text.dart';
 import '../../widgets/stat_tile.dart';
 import '../../utils/currency_formatter.dart';
+import '../../widgets/shimmer_loading.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -39,7 +40,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (dashboardProvider.isLoading) {
       return const Scaffold(
         backgroundColor: AppColors.background,
-        body: Center(child: CircularProgressIndicator(color: AppColors.primaryRed)),
+        body: const SafeArea(child: ShimmerLoadingList(cardCount: 4)),
       );
     }
 

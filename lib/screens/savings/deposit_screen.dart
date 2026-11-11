@@ -10,6 +10,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/savings_provider.dart';
 import '../../widgets/dashboard_kit.dart';
 import '../../widgets/app_button.dart';
+import '../../widgets/mobile_money_payment_sheet.dart';
 
 class DepositScreenArgs {
   final String? planId;
@@ -339,6 +340,13 @@ class _DepositScreenState extends State<DepositScreen> {
                           return;
                         }
 
+                        final paymentChoice = await showMobileMoneyPaymentSheet(
+                          context,
+                          action: 'Deposit',
+                          amount: amount,
+                        );
+                        if (paymentChoice == null || !context.mounted) return;
+
                         final auth = context.read<AuthProvider>();
                         setState(() => _isProcessing = true);
                         final navigator = Navigator.of(context);
@@ -353,8 +361,8 @@ class _DepositScreenState extends State<DepositScreen> {
                             date: DateTime.now(),
                             type: TransactionType.deposit,
                             description: args?.requireDeposit == true
-                                ? 'Initial plan deposit'
-                                : 'Manual deposit',
+                                ? 'Initial plan deposit · ${paymentChoice.providerName} (demo)'
+                                : 'Manual deposit · ${paymentChoice.providerName} (demo)',
                           ),
                         );
 

@@ -39,14 +39,14 @@ CORS_ALLOWED_ORIGINS=https://nzeru-savings.netlify.app,https://yourdomain.com
 EXTRA_CSRF_TRUSTED_ORIGINS=https://yourdomain.com,https://app.yourdomain.com
 ```
 
-#### **Optional AI Assistant Variables**
-The assistant needs an API key from a provider that supports the OpenAI chat-completions API. Add the key only as a Railway secret; never put it in Flutter or Netlify.
+#### **Optional Finance Coach Variables (Cloudflare Workers AI)**
+The finance coach can use Cloudflare Workers AI's free daily allowance. In the Cloudflare dashboard, copy your Account ID and create an API token with Workers AI access. Add both values as Railway backend variables; never put the token in Flutter or Netlify.
 ```
-AI_API_KEY=<provider-api-key>
-AI_API_BASE_URL=https://api.openai.com/v1
-AI_MODEL=gpt-4o-mini
+CLOUDFLARE_ACCOUNT_ID=<cloudflare-account-id>
+AI_API_KEY=<cloudflare-api-token>
+AI_MODEL=@cf/meta/llama-3.2-3b-instruct
 ```
-For another compatible provider, use its documented API base URL and model name. Financial account context is sent only when the conversation is about finances.
+The free Workers plan includes 10,000 Neurons per day; requests may fail after the free daily allowance is used. Keep the Cloudflare account on the Free plan to avoid paid overages. This uses Meta Llama hosted by Cloudflare, not GPT. Financial account context is sent only for finance-related conversations; the backend sends a limited Nzeru account summary, never bank credentials.
 
 #### **Optional / Advanced Variables**
 ```

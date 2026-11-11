@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -36,6 +37,13 @@ FINANCIAL_KEYWORDS = re.compile(
     r'\b(sav(?:e|ing|ings)|balance|loan|credit|deposit|withdraw(?:al)?|'
     r'penalt(?:y|ies)|transaction|financial|money|budget|interest|'
     r'plan|repay(?:ment)?|eligible|eligibility|score)\b',
+    re.IGNORECASE,
+)
+
+ECONOMIC_KEYWORDS = re.compile(
+    r'\b(econom(?:y|ic|ics)|inflation|price(?:s)?|cost of living|'
+    r'exchange rate|currency|devalu(?:e|ation)|gdp|growth|interest rate|'
+    r'central bank|kwacha|macro(?:economics)?)\b',
     re.IGNORECASE,
 )
 
@@ -85,28 +93,45 @@ def assistant_chat(request):
         [message] + [item['content'] for item in safe_history[-4:]]
     )
     financial_context = _assistant_financial_context(request.user) if FINANCIAL_KEYWORDS.search(conversation_text) else None
+    economic_context = _assistant_economic_context() if ECONOMIC_KEYWORDS.search(conversation_text) else None
 
     if not api_key:
         return Response(
-            {'reply': _assistant_fallback_reply(request.user, message, safe_history, financial_context)},
+            {
+                'reply': _assistant_fallback_reply(
+                    request.user, message, safe_history, financial_context,
+                    economic_context,
+                )
+            },
             status=status.HTTP_200_OK,
         )
 
     system_prompt = (
-        'You are Nzelu, a warm and concise general-purpose assistant inside a '
-        'digital savings and lending app. Answer general questions directly, '
-        'including questions unrelated to finance. When a question is unrelated '
-        'to finance, answer it first, then add at most one short, natural offer '
-        'to help with savings, loans, or app features. Do not force that offer '
-        'on every turn. For questions about this user account, use only the '
-        'provided account snapshot; never invent balances, transactions, '
-        'eligibility, or actions. Explain that financial guidance is educational '
-        'and not a guarantee or professional financial advice. Never request '
-        'passwords, verification codes, or payment credentials.'
+        'You are Nzeru Finance Coach, a warm, practical financial education '
+        'assistant for people in Malawi. Focus first on budgeting, saving, '
+        'responsible borrowing, financial wellbeing, and helping users understand '
+        'the Nzeru app. Give clear, actionable answers in plain language. Explain '
+        'relevant Nzeru savings or loan features naturally when they can help; '
+        'never pressure users to buy, borrow, or deposit money, and never invent '
+        'product terms, rates, fees, or guarantees. For account-specific questions, '
+        'use only the supplied private Nzeru account snapshot. Never invent '
+        'balances, transactions, eligibility, or actions. For general questions, '
+        'answer directly and briefly, then offer finance help only when it fits. '
+        'Treat financial guidance as educational, not a guarantee or professional '
+        'financial advice. Never request bank passwords, PINs, verification codes, '
+        'or payment credentials.'
     )
     if financial_context is not None:
         system_prompt += '\nAccount snapshot (private; use only for this user): ' + json.dumps(
             financial_context, separators=(',', ':')
+        )
+    if economic_context is not None:
+        system_prompt += (
+            '\nMalawi economic data snapshot (use only these dated figures for '
+            'economic facts; name the source and observation year, and do not '
+            'describe it as real-time): ' + json.dumps(
+                economic_context, separators=(',', ':')
+            )
         )
 
     payload = {
@@ -119,14 +144,17 @@ def assistant_chat(request):
         'temperature': 0.4,
         'max_tokens': 500,
     }
+    provider_headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }
+    if api_key:
+        provider_headers['Authorization'] = f'Bearer {api_key}'
+
     provider_request = Request(
         f'{settings.AI_API_BASE_URL}/chat/completions',
         data=json.dumps(payload).encode('utf-8'),
-        headers={
-            'Authorization': f'Bearer {api_key}',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
+        headers=provider_headers,
         method='POST',
     )
 
@@ -136,13 +164,23 @@ def assistant_chat(request):
     except HTTPError as error:
         logger.warning('AI provider returned HTTP %s', error.code)
         return Response(
-            {'reply': _assistant_fallback_reply(request.user, message, safe_history, financial_context)},
+            {
+                'reply': _assistant_fallback_reply(
+                    request.user, message, safe_history, financial_context,
+                    economic_context,
+                )
+            },
             status=status.HTTP_200_OK,
         )
     except (URLError, TimeoutError, OSError, ValueError):
         logger.exception('AI provider request failed')
         return Response(
-            {'reply': _assistant_fallback_reply(request.user, message, safe_history, financial_context)},
+            {
+                'reply': _assistant_fallback_reply(
+                    request.user, message, safe_history, financial_context,
+                    economic_context,
+                )
+            },
             status=status.HTTP_200_OK,
         )
 
@@ -154,16 +192,45 @@ def assistant_chat(request):
     )
     if not isinstance(reply, str) or not reply.strip():
         return Response(
-            {'reply': _assistant_fallback_reply(request.user, message, safe_history, financial_context)},
+            {
+                'reply': _assistant_fallback_reply(
+                    request.user, message, safe_history, financial_context,
+                    economic_context,
+                )
+            },
             status=status.HTTP_200_OK,
         )
     return Response({'reply': reply.strip()})
 
 
-def _assistant_fallback_reply(user, message, safe_history=None, financial_context=None):
+def _assistant_fallback_reply(
+    user, message, safe_history=None, financial_context=None,
+    economic_context=None,
+):
     text = (message or '').lower()
     if financial_context is None and FINANCIAL_KEYWORDS.search(' '.join([message] + [item.get('content', '') for item in (safe_history or [])[-4:]])):
         financial_context = _assistant_financial_context(user)
+    if economic_context is None and ECONOMIC_KEYWORDS.search(
+        ' '.join([message] + [item.get('content', '') for item in (safe_history or [])[-4:]])
+    ):
+        economic_context = _assistant_economic_context()
+
+    if economic_context:
+        observations = economic_context.get('latest_indicators', [])
+        if observations:
+            figures = '; '.join(
+                f"{item['name']}: {item['value']} {item['unit']} ({item['year']})"
+                for item in observations[:4]
+            )
+            return (
+                f"The latest Malawi figures in the local dataset are {figures}. "
+                f"Source: {economic_context['source']}. These are dated economic "
+                'indicators, not real-time prices or personalised financial advice.'
+            )
+        return (
+            'The Malawi economics dataset has no usable observations yet. '
+            'Ask an administrator to refresh it before relying on economic answers.'
+        )
 
     if financial_context:
         savings_balance = Decimal(str(financial_context.get('savings_balance', 0)))
@@ -221,6 +288,49 @@ def _assistant_fallback_reply(user, message, safe_history=None, financial_contex
     return (
         'I can help with personal finance basics, savings habits, and app guidance. Try asking about your savings balance, a loan estimate, or what to focus on this week.'
     )
+
+
+def _assistant_economic_context():
+    dataset_path = Path(settings.ECONOMIC_DATASET_PATH)
+    try:
+        with dataset_path.open(encoding='utf-8') as dataset_file:
+            dataset = json.load(dataset_file)
+    except (OSError, ValueError):
+        logger.warning('Economic dataset is unavailable at %s', dataset_path)
+        return None
+
+    if not isinstance(dataset, dict) or not isinstance(dataset.get('indicators'), list):
+        logger.warning('Economic dataset has an invalid format at %s', dataset_path)
+        return None
+
+    latest_indicators = []
+    for indicator in dataset['indicators']:
+        if not isinstance(indicator, dict):
+            continue
+        observations = indicator.get('observations', [])
+        latest = next(
+            (
+                observation for observation in observations
+                if isinstance(observation, dict) and observation.get('value') is not None
+            ),
+            None,
+        )
+        if latest is None:
+            continue
+        latest_indicators.append({
+            'code': indicator.get('code'),
+            'name': indicator.get('name'),
+            'unit': indicator.get('unit', ''),
+            'year': latest.get('year'),
+            'value': latest.get('value'),
+        })
+
+    return {
+        'country': dataset.get('country', 'Malawi'),
+        'source': dataset.get('source', 'World Bank Indicators API'),
+        'updated_at': dataset.get('updated_at'),
+        'latest_indicators': latest_indicators,
+    }
 
 
 def _assistant_financial_context(user):

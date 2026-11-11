@@ -14,6 +14,7 @@ import '../../utils/currency_util.dart';
 import '../../widgets/candlestick_chart.dart';
 import '../../widgets/dashboard_kit.dart';
 import '../../widgets/app_logo.dart';
+import '../../widgets/shimmer_loading.dart';
 
 class DashboardScreenV2 extends StatefulWidget {
   const DashboardScreenV2({super.key});
@@ -127,10 +128,16 @@ class _DashboardScreenV2State extends State<DashboardScreenV2> {
                   ),
                   if (dashboard.isLoading) ...[
                     const SizedBox(height: 20),
-                    const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.loadingRed,
-                        backgroundColor: AppColors.tiffanyMist,
+                    const DashboardPanel(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ShimmerBlock(width: 150, height: 14),
+                          SizedBox(height: 14),
+                          ShimmerBlock(height: 12),
+                          SizedBox(height: 10),
+                          ShimmerBlock(width: 220, height: 12),
+                        ],
                       ),
                     ),
                   ],

@@ -21,17 +21,18 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     _ChatMessage(
       role: 'assistant',
       text:
-          'Hi! Ask me general questions or about your savings and loans. Account questions share a limited account summary with our AI provider to create the answer.',
+          'Hi! I can help with budgeting, saving, responsible borrowing, and questions about your Nzeru account. Finance questions share a limited Nzeru account summary with our AI service to prepare an answer. Do not share bank passwords, PINs, or verification codes.',
     ),
   ];
 
   bool _isSending = false;
+  bool _hasAskedQuestion = false;
 
   final List<String> _quickPrompts = [
     'How am I doing with savings?',
-    'Am I ready for a loan?',
-    'What should I do next this week?',
-    'Why did my balance change?',
+    'Help me make a weekly budget',
+    'How much can I safely set aside?',
+    'Explain my savings progress',
   ];
 
   @override
@@ -47,6 +48,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     setState(() {
       _messages.add(_ChatMessage(role: 'user', text: text));
       _isSending = true;
+      _hasAskedQuestion = true;
     });
 
     _controller.clear();
@@ -110,7 +112,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
         ),
         title: Text(
-          'Nzeru AI Coach',
+          'Nzeru Finance Coach',
           style: GoogleFonts.poppins(
             fontSize: 18,
             fontWeight: FontWeight.w700,
@@ -142,7 +144,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                          'Ask me anything. Account-specific questions share a limited summary with our AI provider.',
+                          'Practical help with saving, budgeting, loans, and your Nzeru account.',
                       style: GoogleFonts.poppins(
                         color: Colors.white,
                         fontSize: 13,
@@ -153,26 +155,57 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: _quickPrompts
-                    .map(
-                      (prompt) => ActionChip(
-                        label: Text(
-                          prompt,
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        backgroundColor: AppColors.primaryTiffanyLight,
-                        onPressed: _isSending ? null : () => _sendMessage(prompt),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 360),
+              curve: Curves.easeInOutCubic,
+              alignment: Alignment.topCenter,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                transitionBuilder: (child, animation) => ClipRect(
+                  child: SizeTransition(
+                    sizeFactor: animation,
+                    axisAlignment: -1,
+                    child: FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0, -0.24),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
                       ),
-                    )
-                    .toList(),
+                    ),
+                  ),
+                ),
+                child: _hasAskedQuestion
+                    ? const SizedBox.shrink(key: ValueKey('prompts-hidden'))
+                    : Padding(
+                        key: const ValueKey('prompts-visible'),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: _quickPrompts
+                              .map(
+                                (prompt) => ActionChip(
+                                  label: Text(
+                                    prompt,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  backgroundColor: AppColors.primaryTiffanyLight,
+                                  onPressed: _isSending
+                                      ? null
+                                      : () => _sendMessage(prompt),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
               ),
             ),
             const SizedBox(height: 12),

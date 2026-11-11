@@ -9,6 +9,7 @@ import '../../config/app_colors.dart';
 import '../../models/ijc_group.dart';
 import '../../providers/ijc_provider.dart';
 import '../../screens/ijc/ijc_deposit_screen.dart';
+import '../../widgets/mobile_money_payment_sheet.dart';
 import '../../utils/currency_util.dart';
 
 class IjcDetailScreen extends StatelessWidget {
@@ -755,6 +756,13 @@ class IjcDetailScreen extends StatelessWidget {
                         }
                       }
 
+                      final paymentChoice = await showMobileMoneyPaymentSheet(
+                        context,
+                        action: isDeposit ? 'Deposit' : 'Withdraw',
+                        amount: amount,
+                      );
+                      if (paymentChoice == null || !context.mounted) return;
+
                       setDialogState(() => isSubmitting = true);
                       final provider = context.read<IjcProvider>();
                       bool success;
@@ -762,7 +770,7 @@ class IjcDetailScreen extends StatelessWidget {
                         success = await provider.deposit(
                           groupId: group.id,
                           amount: amount,
-                          description: noteCtrl.text.trim(),
+                          description: '${noteCtrl.text.trim().isEmpty ? 'Pocket deposit' : noteCtrl.text.trim()} · ${paymentChoice.providerName} (demo)',
                           totalAmount: null,
                           releaseAmount: releaseAmount,
                           cashOutPolicy: needsConfig ? policy : null,
@@ -771,7 +779,7 @@ class IjcDetailScreen extends StatelessWidget {
                         success = await provider.withdraw(
                           groupId: group.id,
                           amount: amount,
-                          description: noteCtrl.text.trim(),
+                          description: '${noteCtrl.text.trim().isEmpty ? 'Pocket withdrawal' : noteCtrl.text.trim()} · ${paymentChoice.providerName} (demo)',
                         );
                       }
 

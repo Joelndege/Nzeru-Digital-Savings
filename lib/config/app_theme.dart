@@ -51,8 +51,8 @@ class AppTheme {
       cardTheme: const CardThemeData(
         color: AppColors.cardSurface,
         surfaceTintColor: Colors.transparent,
-        elevation: 4,
-        shadowColor: Color(0x33000000),
+        elevation: 6,
+        shadowColor: Color(0x26005F69),
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
       ),

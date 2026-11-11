@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -138,20 +140,35 @@ class DashboardPanel extends StatelessWidget {
       width: width,
       child: Container(
         margin: margin,
-        child: Container(
-          padding: padding,
-          decoration: BoxDecoration(
-            color: AppColors.cardSurface,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(18),
-                blurRadius: 24,
-                offset: const Offset(0, 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: glowColor.withAlpha(18),
+              blurRadius: 22,
+              offset: const Offset(0, 8),
+            ),
+            BoxShadow(
+              color: Colors.black.withAlpha(8),
+              blurRadius: 5,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: Container(
+              padding: padding,
+              decoration: BoxDecoration(
+                color: AppColors.cardSurface.withValues(alpha: 0.88),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white.withAlpha(220)),
               ),
-            ],
+              child: child,
+            ),
           ),
-          child: child,
         ),
       ),
     );

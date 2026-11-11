@@ -129,7 +129,7 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
                               label: 'Tracked',
                               value: CurrencyUtil.formatCompact(trackedSavings),
                               icon: Icons.savings_rounded,
-                              accent: const Color(0xFF54738A),
+                              accent: AppColors.brandBlue,
                             ),
                             _OverviewTile(
                               label: 'Outstanding',
@@ -137,7 +137,7 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
                                 outstandingCredit,
                               ),
                               icon: Icons.account_balance_wallet_rounded,
-                              accent: const Color(0xFFD96069),
+                              accent: AppColors.brandRed,
                             ),
                             _OverviewTile(
                               label: 'Repaid',
@@ -183,7 +183,7 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
                                       plan.title,
                                       style: GoogleFonts.poppins(
                                         fontWeight: FontWeight.w700,
-                                        color: const Color(0xFF17303B),
+                                        color: AppColors.textPrimary,
                                       ),
                                     ),
                                   ),
@@ -241,7 +241,7 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
                           data: SliderTheme.of(context).copyWith(
                             activeTrackColor: AppColors.brandBlue,
                             inactiveTrackColor: AppColors.brandBlueLight,
-                            thumbColor: const Color(0xFFD96069),
+                            thumbColor: AppColors.brandRed,
                             overlayColor: const Color(0x22D96069),
                             trackHeight: 6,
                           ),
@@ -282,14 +282,14 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
                               'MK 100',
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
-                                color: const Color(0xFF6A7C86),
+                                color: AppColors.textSecondary,
                               ),
                             ),
                             Text(
                               CurrencyUtil.formatNoDecimal(maxCredit),
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
-                                color: const Color(0xFF6A7C86),
+                                color: AppColors.textSecondary,
                               ),
                             ),
                           ],
@@ -364,12 +364,12 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
                               value: CurrencyUtil.formatCompact(
                                 creditAmount * _interestRate / 100,
                               ),
-                              accent: const Color(0xFFD96069),
+                              accent: AppColors.brandRed,
                             ),
                             _BreakdownTile(
                               label: 'Total repayment',
                               value: CurrencyUtil.formatCompact(totalRepayment),
-                              accent: const Color(0xFF54738A),
+                              accent: AppColors.brandBlue,
                             ),
                             _BreakdownTile(
                               label: 'Estimated span',
@@ -436,7 +436,7 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
                       ),
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: const Color(0xFF6A7C86),
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ],
@@ -675,7 +675,7 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
     if (plans.isEmpty ||
         activeCredit != null ||
         maxCredit < _minimumCreditAmount) {
-      return const Color(0xFFD96069);
+      return AppColors.brandRed;
     }
     return AppColors.brandBlue;
   }
@@ -794,7 +794,7 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
         key: const ValueKey('instant-cashout'),
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: const Color(0xFFEAF6F4),
+          color: AppColors.brandBlueLight,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(color: AppColors.brandBlue.withAlpha(70)),
         ),
@@ -822,7 +822,7 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFF17303B),
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -831,7 +831,7 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       height: 1.4,
-                      color: const Color(0xFF48616C),
+                      color: AppColors.brandBlueDark,
                     ),
                   ),
                 ],
@@ -855,12 +855,12 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
       key: ValueKey<String>('${_withdrawalMode.name}-cashout'),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FBFB),
+        color: AppColors.surfaceSoft,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
           color: warning == null
-              ? const Color(0xFFD8E8E5)
-              : const Color(0xFFF0C7CB),
+              ? AppColors.brandBlueLight
+              : AppColors.brandRedLight,
         ),
       ),
       child: Column(
@@ -871,7 +871,7 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
             style: GoogleFonts.poppins(
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF17303B),
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 10),
@@ -881,13 +881,13 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF17303B),
+              color: AppColors.textPrimary,
             ),
             decoration: _fieldDecoration(payoutLabel).copyWith(
               prefixText: 'MK ',
               suffixIcon: const Icon(
                 Icons.edit_outlined,
-                color: Color(0xFF6A7C86),
+                color: AppColors.textSecondary,
               ),
             ),
             onChanged: (_) {
@@ -904,7 +904,7 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
             style: GoogleFonts.poppins(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF17303B),
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 4),
@@ -915,7 +915,7 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
             style: GoogleFonts.poppins(
               fontSize: 13,
               height: 1.4,
-              color: const Color(0xFF48616C),
+              color: AppColors.brandBlueDark,
             ),
           ),
           if (warning != null) ...[
@@ -923,14 +923,14 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFFCEDEE),
+                color: AppColors.brandRedLight,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
                 children: [
                   const Icon(
                     Icons.error_outline_rounded,
-                    color: Color(0xFFD96069),
+                    color: AppColors.brandRed,
                     size: 18,
                   ),
                   const SizedBox(width: 8),
@@ -940,7 +940,7 @@ class _RequestLoanScreenState extends State<RequestLoanScreen> {
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFFB2404C),
+                        color: AppColors.brandRedDark,
                       ),
                     ),
                   ),
@@ -978,7 +978,7 @@ class _Header extends StatelessWidget {
           ),
           icon: const Icon(
             Icons.arrow_back_ios_new_rounded,
-            color: Color(0xFF17303B),
+            color: AppColors.textPrimary,
             size: 18,
           ),
         ),
@@ -1003,7 +1003,7 @@ class _Header extends StatelessWidget {
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
                   letterSpacing: -1,
-                  color: const Color(0xFF17303B),
+                  color: AppColors.textPrimary,
                 ),
               ),
             ],
@@ -1054,7 +1054,7 @@ class _SectionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.94),
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: const Color(0xFFE4EEEC)),
+        border: Border.all(color: AppColors.borderLight),
         boxShadow: const [
           BoxShadow(
             color: Color(0x120D2A35),
@@ -1084,7 +1084,7 @@ class _SectionTitle extends StatelessWidget {
           style: GoogleFonts.poppins(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: const Color(0xFF17303B),
+            color: AppColors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
@@ -1093,7 +1093,7 @@ class _SectionTitle extends StatelessWidget {
           style: GoogleFonts.poppins(
             fontSize: 13,
             height: 1.4,
-            color: const Color(0xFF6A7C86),
+            color: AppColors.textSecondary,
           ),
         ),
       ],
@@ -1121,7 +1121,7 @@ class _OverviewTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE4EEEC)),
+        border: Border.all(color: AppColors.borderLight),
       ),
       child: Row(
         children: [
@@ -1145,7 +1145,7 @@ class _OverviewTile extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: const Color(0xFF6A7C86),
+                    color: AppColors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -1156,7 +1156,7 @@ class _OverviewTile extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: const Color(0xFF17303B),
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ],
@@ -1179,7 +1179,7 @@ class _ModeSelector extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F7F6),
+        color: AppColors.brandBlueLight,
         borderRadius: BorderRadius.circular(22),
       ),
       child: Row(
@@ -1245,7 +1245,7 @@ class _ModeChip extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w800,
-                color: selected ? Colors.white : const Color(0xFF54738A),
+                color: selected ? Colors.white : AppColors.brandBlue,
               ),
             ),
           ),
@@ -1282,7 +1282,7 @@ class _BreakdownTile extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF6A7C86),
+              color: AppColors.textSecondary,
             ),
           ),
           const Spacer(),
@@ -1293,7 +1293,7 @@ class _BreakdownTile extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF17303B),
+              color: AppColors.textPrimary,
             ),
           ),
         ],
@@ -1318,9 +1318,9 @@ class _EmptyStateCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FBFB),
+        color: AppColors.surfaceSoft,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE4EEEC)),
+        border: Border.all(color: AppColors.borderLight),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1330,7 +1330,7 @@ class _EmptyStateCard extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontSize: 13,
               height: 1.4,
-              color: const Color(0xFF48616C),
+              color: AppColors.brandBlueDark,
             ),
           ),
           const SizedBox(height: 12),
@@ -1360,14 +1360,14 @@ InputDecoration _fieldDecoration(String label) {
     labelText: label,
     labelStyle: GoogleFonts.poppins(
       fontWeight: FontWeight.w700,
-      color: const Color(0xFF6A7C86),
+      color: AppColors.textSecondary,
     ),
     filled: true,
     fillColor: Colors.white,
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(18),
-      borderSide: const BorderSide(color: Color(0xFFD8E8E5)),
+      borderSide: const BorderSide(color: AppColors.brandBlueLight),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(18),

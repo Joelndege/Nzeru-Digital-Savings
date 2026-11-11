@@ -29,14 +29,23 @@ class BottomNavBar extends StatelessWidget {
         ],
       ),
       child: SafeArea(
+        left: false,
+        right: false,
+        top: false,
+        bottom: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+          padding: EdgeInsets.fromLTRB(
+            0,
+            8,
+            0,
+            MediaQuery.viewPaddingOf(context).bottom + 8,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Expanded(
                 child: _NavItem(
-                  icon: Icons.dashboard_rounded,
+                  icon: Icons.grid_view_rounded,
                   label: 'Home',
                   isActive: currentIndex == 0,
                   onTap: () => onTap(0),
@@ -44,7 +53,7 @@ class BottomNavBar extends StatelessWidget {
               ),
               Expanded(
                 child: _NavItem(
-                  icon: Icons.savings_rounded,
+                  icon: Icons.savings_outlined,
                   label: 'Savings',
                   isActive: currentIndex == 1,
                   onTap: () => onTap(1),
@@ -52,7 +61,7 @@ class BottomNavBar extends StatelessWidget {
               ),
               Expanded(
                 child: _NavItem(
-                  icon: Icons.account_balance_rounded,
+                  icon: Icons.credit_score_rounded,
                   label: 'Credit',
                   isActive: currentIndex == 2,
                   onTap: () => onTap(2),
@@ -60,7 +69,7 @@ class BottomNavBar extends StatelessWidget {
               ),
               Expanded(
                 child: _NavItem(
-                  icon: Icons.account_balance_wallet_rounded,
+                  icon: Icons.groups_2_rounded,
                   label: 'Pocket',
                   isActive: currentIndex == 3,
                   onTap: () => onTap(3),
@@ -68,7 +77,7 @@ class BottomNavBar extends StatelessWidget {
               ),
               Expanded(
                 child: _NavItem(
-                  icon: Icons.analytics_rounded,
+                  icon: Icons.query_stats_rounded,
                   label: 'Reports',
                   isActive: currentIndex == 4,
                   onTap: () => onTap(4),
@@ -76,7 +85,7 @@ class BottomNavBar extends StatelessWidget {
               ),
               Expanded(
                 child: _NavItem(
-                  icon: Icons.person_rounded,
+                  icon: Icons.person_outline_rounded,
                   label: 'Profile',
                   isActive: currentIndex == 5,
                   onTap: () => onTap(5),
@@ -115,6 +124,10 @@ class _NavItem extends StatelessWidget {
           color: isActive
               ? Colors.white.withValues(alpha: 0.14)
               : Colors.transparent,
+            borderRadius: BorderRadius.circular(14),
+            border: isActive
+                ? Border.all(color: Colors.white.withValues(alpha: 0.12))
+                : null,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

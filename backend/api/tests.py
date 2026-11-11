@@ -1,4 +1,6 @@
 import json
+import tempfile
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from django.contrib.auth import get_user_model
@@ -20,6 +22,24 @@ class AssistantChatTests(TestCase):
         request = self.factory.post('/api/assistant/chat/', payload, format='json')
         force_authenticate(request, user=self.user)
         return assistant_chat(request)
+
+    def economic_dataset(self):
+        dataset = {
+            'country': 'Malawi',
+            'source': 'World Bank Indicators API',
+            'updated_at': '2026-10-21T00:00:00+00:00',
+            'indicators': [{
+                'code': 'FP.CPI.TOTL.ZG',
+                'name': 'Inflation, consumer prices (annual %)',
+                'unit': '%',
+                'observations': [{'year': '2024', 'value': 27.4}],
+            }],
+        }
+        dataset_file = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+        json.dump(dataset, dataset_file)
+        dataset_file.close()
+        self.addCleanup(lambda: Path(dataset_file.name).unlink(missing_ok=True))
+        return dataset_file.name
 
     @override_settings(AI_API_KEY='')
     def test_missing_provider_key_returns_fallback_response(self):
@@ -72,3 +92,26 @@ class AssistantChatTests(TestCase):
         prompt = payload['messages'][0]['content']
         self.assertIn('Account snapshot', prompt)
         self.assertNotIn(self.user.username, prompt)
+
+    @override_settings(
+        AI_API_KEY='test-key',
+        AI_API_BASE_URL='https://provider.example/v1',
+        AI_MODEL='test-model',
+    )
+    @patch('api.views.urlopen')
+    def test_economic_question_adds_dated_malawi_dataset(self, mocked_urlopen):
+        provider_response = MagicMock()
+        provider_response.__enter__.return_value.read.return_value = json.dumps({
+            'choices': [{'message': {'content': 'Economic answer.'}}]
+        }).encode()
+        mocked_urlopen.return_value = provider_response
+
+        with self.settings(ECONOMIC_DATASET_PATH=self.economic_dataset()):
+            response = self.post_chat({'message': 'What is inflation in Malawi?'})
+
+        self.assertEqual(response.status_code, 200)
+        request = mocked_urlopen.call_args.args[0]
+        payload = json.loads(request.data.decode())
+        prompt = payload['messages'][0]['content']
+        self.assertIn('Malawi economic data snapshot', prompt)
+        self.assertIn('2024', prompt)

@@ -64,7 +64,7 @@ class _RepaymentScreenState extends State<RepaymentScreen> {
                               'Repay Credit',
                               style: GoogleFonts.poppins(
                                 fontSize: 28,
-                                color: const Color(0xFF171412),
+                                color: AppColors.textPrimary,
                               ),
                             ),
                           ],
@@ -115,7 +115,7 @@ class _RepaymentScreenState extends State<RepaymentScreen> {
                             'Payment amount',
                             style: GoogleFonts.poppins(
                               fontSize: 20,
-                              color: const Color(0xFF171412),
+                              color: AppColors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 12),

@@ -7,6 +7,7 @@ import '../../config/app_colors.dart';
 import '../../services/api_service.dart';
 import '../../widgets/dashboard_kit.dart';
 import '../../widgets/notification_card.dart';
+import '../../widgets/shimmer_loading.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -85,9 +86,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     future: _future,
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
-                        return const Center(
-                          child: CircularProgressIndicator(color: AppColors.loadingRed),
-                        );
+                        return const ShimmerLoadingList(cardCount: 4);
                       }
 
                       final notifications = snapshot.data!;

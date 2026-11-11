@@ -72,7 +72,7 @@ class _LoanEligibilityScreenState extends State<LoanEligibilityScreen> {
                     style: GoogleFonts.poppins(
                       fontSize: 30,
                       height: 0.96,
-                      color: const Color(0xFF171412),
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 14),
@@ -86,8 +86,8 @@ class _LoanEligibilityScreenState extends State<LoanEligibilityScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: eligible
-                                ? const Color(0xFFE7F4EA)
-                                : const Color(0xFFF8E9E7),
+                                ? AppColors.brandBlueLight
+                                : AppColors.brandRedLight,
                             borderRadius: BorderRadius.circular(18),
                           ),
                           child: Text(
@@ -98,8 +98,8 @@ class _LoanEligibilityScreenState extends State<LoanEligibilityScreen> {
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: eligible
-                                  ? const Color(0xFF32663E)
-                                  : const Color(0xFF9B4E42),
+                                  ? AppColors.brandBlueDark
+                                  : AppColors.brandRedDark,
                             ),
                           ),
                         ),
@@ -141,7 +141,7 @@ class _LoanEligibilityScreenState extends State<LoanEligibilityScreen> {
                           'Eligibility Overview',
                           style: GoogleFonts.poppins(
                             fontSize: 22,
-                            color: const Color(0xFF171412),
+                            color: AppColors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 14),
@@ -151,13 +151,13 @@ class _LoanEligibilityScreenState extends State<LoanEligibilityScreen> {
                             _MetricCard(
                               label: 'Eligible',
                               value: CurrencyUtil.formatCompact(maxCredit),
-                              accent: const Color(0xFF4B9957),
+                              accent: AppColors.brandBlue,
                               icon: Icons.verified_rounded,
                             ),
                             _MetricCard(
                               label: 'Tracked',
                               value: CurrencyUtil.formatCompact(trackedSavings),
-                              accent: const Color(0xFF876446),
+                              accent: AppColors.brandBlueDark,
                               icon: Icons.savings_rounded,
                             ),
                             _MetricCard(
@@ -165,7 +165,7 @@ class _LoanEligibilityScreenState extends State<LoanEligibilityScreen> {
                               value: CurrencyUtil.formatCompact(
                                 finance.outstandingCredit,
                               ),
-                              accent: const Color(0xFFC2545E),
+                              accent: AppColors.brandRed,
                               icon: Icons.wallet_rounded,
                             ),
                             _MetricCard(
@@ -173,7 +173,7 @@ class _LoanEligibilityScreenState extends State<LoanEligibilityScreen> {
                               value: CurrencyUtil.formatCompact(
                                 finance.totalRepaid,
                               ),
-                              accent: const Color(0xFF4C6A78),
+                              accent: AppColors.brandBlueDark,
                               icon: Icons.paid_rounded,
                             ),
                           ],
@@ -191,7 +191,7 @@ class _LoanEligibilityScreenState extends State<LoanEligibilityScreen> {
                           'Active Credit',
                           style: GoogleFonts.poppins(
                             fontSize: 22,
-                            color: const Color(0xFF171412),
+                            color: AppColors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -201,14 +201,14 @@ class _LoanEligibilityScreenState extends State<LoanEligibilityScreen> {
                             style: GoogleFonts.poppins(
                               fontSize: 13,
                               height: 1.4,
-                              color: const Color(0xFF6F665C),
+                              color: AppColors.textSecondary,
                             ),
                           )
                         else ...[
                           DashboardInfoRow(
                             label: 'Status',
                             value: activeCredit.statusLabel,
-                            valueColor: const Color(0xFF4B9957),
+                            valueColor: AppColors.brandBlue,
                           ),
                           DashboardInfoRow(
                             label: 'Credit amount',
@@ -237,7 +237,7 @@ class _LoanEligibilityScreenState extends State<LoanEligibilityScreen> {
                             value: CurrencyUtil.formatNoDecimal(
                               activeCredit.remainingBalance,
                             ),
-                            valueColor: const Color(0xFFC2545E),
+                            valueColor: AppColors.brandRed,
                           ),
                           const SizedBox(height: 10),
                           ClipRRect(
@@ -255,7 +255,7 @@ class _LoanEligibilityScreenState extends State<LoanEligibilityScreen> {
                             style: GoogleFonts.poppins(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFF4B9957),
+                              color: AppColors.brandBlue,
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -317,7 +317,7 @@ class _MetricCard extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontSize: 11,
               letterSpacing: 1.2,
-              color: const Color(0xFF7E756A),
+              color: AppColors.textTertiary,
             ),
           ),
           const SizedBox(height: 4),
@@ -328,7 +328,7 @@ class _MetricCard extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontSize: 19,
               height: 1,
-              color: const Color(0xFF171412),
+              color: AppColors.textPrimary,
             ),
           ),
         ],

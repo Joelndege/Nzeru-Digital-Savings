@@ -9,6 +9,7 @@ import '../../models/ijc_group.dart';
 import '../../providers/ijc_provider.dart';
 import '../../utils/currency_util.dart';
 import 'ijc_detail_screen.dart';
+import '../../widgets/shimmer_loading.dart';
 
 class IjcScreen extends StatefulWidget {
   const IjcScreen({super.key});
@@ -63,7 +64,7 @@ class _IjcScreenState extends State<IjcScreen> {
             final isWide = constraints.maxWidth >= 980;
             final cardWidth = isWide ? 360.0 : double.infinity;
             return provider.isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? const ShimmerLoadingList(cardCount: 3)
                 : SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: Padding(

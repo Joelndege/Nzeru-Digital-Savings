@@ -30,6 +30,13 @@ class StatTile extends StatelessWidget {
           color: AppColors.cardBg,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppColors.border, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.brandBlueDark.withAlpha(14),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

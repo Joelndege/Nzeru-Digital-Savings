@@ -12,6 +12,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/savings_provider.dart';
 import '../../utils/currency_util.dart';
 import '../../widgets/dashboard_kit.dart';
+import '../../widgets/mobile_money_payment_sheet.dart';
 import '../../widgets/progress_ring.dart';
 import '../../widgets/withdrawal_lock_card.dart';
 import 'deposit_screen.dart';
@@ -406,6 +407,13 @@ class PlanDetailScreen extends StatelessWidget {
                 return;
               }
 
+              final paymentChoice = await showMobileMoneyPaymentSheet(
+                context,
+                action: 'Withdraw',
+                amount: amount,
+              );
+              if (paymentChoice == null || !context.mounted) return;
+
               final auth = context.read<AuthProvider>();
               final success = await context
                   .read<SavingsProvider>()
@@ -418,8 +426,8 @@ class PlanDetailScreen extends StatelessWidget {
                       date: DateTime.now(),
                       type: TransactionType.withdrawal,
                       description: reasonController.text.trim().isEmpty
-                          ? 'Savings withdrawal'
-                          : reasonController.text.trim(),
+                          ? 'Savings withdrawal · ${paymentChoice.providerName} (demo)'
+                          : '${reasonController.text.trim()} · ${paymentChoice.providerName} (demo)',
                     ),
                   );
 
